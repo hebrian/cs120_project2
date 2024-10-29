@@ -36,6 +36,12 @@ for (let row = 0; row < 6; row++) {
 
 // Set up event listeners
 submitButton.addEventListener("click", interpretGuess);
+// Listen for the enter key to be pressed when typing in the input field
+guessInput.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        interpretGuess();
+    }
+});
 
 // Function to interpret the user's guess
 function interpretGuess() {
