@@ -16,14 +16,16 @@ let guessInput = document.getElementById("guess");
 let submitButton = document.getElementById("submit-button");
 
 // Generate 6 rows with 5 cells each
+// Do this in javascript rather than hardcoding in HTML
 for (let row = 0; row < 6; row++) {
-    const rowDiv = document.createElement("div");
-    rowDiv.classList.add("row");
+    const rowDiv = document.createElement("div"); // create a new div for each row
+    rowDiv.classList.add("row"); // Add the "row" class to the div
 
     // Create 5 cells for each row
+    // Do this in a loop rather than hardcoding in HTML
     for (let col = 0; col < 5; col++) {
         const cell = document.createElement("div");
-        cell.classList.add("cell");
+        cell.classList.add("cell"); // Add the "cell" class to the div
         cell.id = `cell-${row}-${col}`; // Give each cell a unique id
         rowDiv.appendChild(cell);
     }
@@ -41,7 +43,7 @@ function interpretGuess() {
     const guess = guessInput.value.toLowerCase();
 
     // Check if the guess is the correct length
-    if (guess.length !== answer.length) {
+    if (guess.length !== 5) {
         alert("Please enter a 5-letter word.");
         return;
     }
@@ -67,12 +69,21 @@ function interpretGuess() {
 }
 
 function displayGuess(guess) {
-    // print "todo: display guess"
-    print("todo: display guess");
+    // Get the current row and update the cells with the user's guess
+    // add 1 to match the HTML/CSS :nth-child indexing, which starts from 1 and not 0
+    const row = document.querySelector(`.row:nth-child(${currentRow + 1})`); 
+    const cells = row.querySelectorAll(".cell"); // Select all the cells in the row
+    for (let i = 0; i < guess.length; i++) {
+        cells[i].textContent = guess[i];
+    }
 }
 
 function checkGuess(guess) {
     // print "todo: check guess"
-    print("todo: check guess");
+    console.log("todo: check guess");
 }
 
+function endGame() {
+    // Disable the submit button
+    submitButton.disabled = true;
+}
