@@ -79,6 +79,20 @@ body {
 
 /* Add space above the theme selection */
 #current-theme {
-    margin-top: 20px; /* Adjust the value as needed */
+    margin-top: 20px;
     margin-bottom: 10px;
+}
+
+/* Responsive styles for screens 600px and below */
+@media (max-width: 600px) {
+    .cell {
+        width: 40px; /* $$$New Change$$$ */
+        height: 40px; /* $$$New Change$$$ */
+        font-size: 1.2rem; /* $$$New Change$$$ */
+    }
+
+    #guess {
+        width: 100%; /* $$$New Change$$$ */
+        max-width: 150px; /* $$$New Change$$$ */
+    }
 }
