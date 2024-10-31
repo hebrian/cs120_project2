@@ -52,8 +52,8 @@ async function getWordList(theme = "classic") {
     }
 
     try {
-        // Fetch up to 30 words based on the specified theme or classic mode
-        const response = await fetch(apiUrl + "&max=30");
+        // Fetch up to 50 words based on the specified theme or classic mode
+        const response = await fetch(apiUrl + "&max=50");
         const words = await response.json();
 
         // Filter out multi-word phrases and ensure only single, five-letter words
