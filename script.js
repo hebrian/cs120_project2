@@ -34,6 +34,9 @@ for (let row = 0; row < 6; row++) {
     gameBoard.appendChild(rowDiv);
 }
 
+// Call initializeLetterBoard once at the start of the game
+initializeLetterBoard();
+
 // Call getWordList to fetch the list of words from the API
 getWordList(theme).then(wordList => {
     // Select a random word from the word list
@@ -124,7 +127,7 @@ async function interpretGuess() {
     if (currentRow === maxAttempts) {
         setTimeout(() => {
             alert("You have used all your attempts. The correct word was " + answer + ".");
-            resetGame();
+            resetGame(theme);
         }, 500); // Delay to ensure board updates before alert
     }
 }
@@ -145,28 +148,25 @@ function checkGuess(guess) {
     const answerArray = answer.split(""); // Convert the answer to an array of letters
     const guessArray = guess.split(""); // Convert the guess to an array of letters
 
-    // Mark correct letters and positions with green
+    // Mark correct letters and positions with green, misplaced letters with yellow
     guessArray.forEach((letter, index) => {
         if (letter === answerArray[index]) {
-            row[index].classList.add("correct"); // Use green for correct letter in correct position
-            answerArray[index] = null; // Set the letter to null to avoid duplicate marking
-            guessArray[index] = null; 
+            row[index].classList.add("correct");
+            answerArray[index] = null;
+            guessArray[index] = null;
+        } else if (letter && answerArray.includes(letter)) {
+            row[index].classList.add("misplaced");
+            answerArray[answerArray.indexOf(letter)] = null;
+        } else {
+            row[index].classList.add("incorrect");
         }
-    });
 
-    // Mark misplaced letters with yellow and incorrect letters with gray
-    guessArray.forEach((letter, index) => {
-        if (letter && answerArray.includes(letter)) {
-            row[index].classList.add("misplaced"); // Use yellow for misplaced letter
-            answerArray[answerArray.indexOf(letter)] = null; // Set the letter to null to avoid duplicate marking
-        } else if (letter) {
-            row[index].classList.add("incorrect"); // Use gray for incorrect letter
-        }
+        // Mark the letter as used on the letter board
+        markLetterAsUsed(letter);
     });
 
     // Check if the guess matches the answer
     if (guess === answer) {
-        // Display the entire guess with styling, then show the alert
         setTimeout(() => {
             // Use currentRow (not + 1 due to the timeout) to get the correct attempt number
             alert(`Congratulations! You got the correct word in ${currentRow} attempts.`); 
@@ -187,6 +187,10 @@ function resetGame(theme = "classic") {
     // Reset game variables
     currentRow = 0;
     guessInput.value = "";
+    theme = theme; // whatever theme was last selected
+    
+    // Reset the letter board
+    resetLetterBoard(); 
 
     // Get a new answer from the word list
     getWordList(theme).then(wordList => {
@@ -205,6 +209,36 @@ function applyTheme(theme) {
 
     // Reset the game with the new theme
     resetGame(theme);
+}
+
+// Initialize the letter board with the alphabet
+function initializeLetterBoard() {
+    const letterBoard = document.getElementById("letter-board");
+    letterBoard.innerHTML = ''; // Clear any existing letters
+
+    const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
+    alphabet.forEach(letter => {
+        const letterDiv = document.createElement("div");
+        letterDiv.textContent = letter;
+        letterDiv.classList.add("letter");
+        letterDiv.id = `letter-${letter}`; // Unique ID for each letter
+        letterBoard.appendChild(letterDiv);
+    });
+}
+
+// Function to mark a letter as used
+function markLetterAsUsed(letter) {
+    const letterDiv = document.getElementById(`letter-${letter.toUpperCase()}`);
+    if (letterDiv) {
+        letterDiv.classList.add("used"); // to change the color of the letter
+    }
+}
+
+function resetLetterBoard() {
+    const letterDivs = document.querySelectorAll("#letter-board .letter");
+    letterDivs.forEach(letterDiv => {
+        letterDiv.classList.remove("used"); // Remove the 'used' class from each letter
+    });
 }
 
 /*-----Set up event listeners-----*/

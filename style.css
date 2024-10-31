@@ -9,7 +9,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh; 
+    padding: 20px; 
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
 }
 
 .container {
@@ -95,4 +97,37 @@ body {
         width: 100%; /* $$$New Change$$$ */
         max-width: 150px; /* $$$New Change$$$ */
     }
+}
+
+/* Used Letters Board */
+.used-letters {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#letter-board {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.letter {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 1px solid black;
+    background-color: lightgray; /* Initial color */
+}
+
+.letter.used {
+    background-color: darkgray; /* Color to indicate letter has been guessed */
+    color: white;
 }
