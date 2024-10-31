@@ -103,8 +103,10 @@ async function interpretGuess() {
 
     // End game if the user has used all attempts 
     if (currentRow === maxAttempts) {
-        alert("You have used all your attempts. The correct word was " + answer + ".");
-        endGame();
+        setTimeout(() => {
+            alert("You have used all your attempts. The correct word was " + answer + ".");
+            resetGame();
+        }, 500); // Delay to ensure board updates before alert
     }
 }
 
@@ -142,11 +144,36 @@ function checkGuess(guess) {
             row[index].classList.add("incorrect"); // Use gray for incorrect letter
         }
     });
+
+    // Check if the guess matches the answer
+    if (guess === answer) {
+        // Display the entire guess with styling, then show the alert
+        setTimeout(() => {
+            // Use currentRow (not + 1 due to the timeout) to get the correct attempt number
+            alert(`Congratulations! You got the correct word in ${currentRow} attempts.`); 
+            resetGame();
+        }, 500); // Delay to ensure board updates before alert
+    }
 }
 
-function endGame() {
-    // Disable the submit button
-    submitButton.disabled = true;
+
+function resetGame() {
+    // Reset the board cells to be blank
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach(cell => {
+        cell.textContent = ""; // Clear the text content of the cell
+        cell.classList.remove("correct", "misplaced", "incorrect");
+    });
+
+    // Reset game variables
+    currentRow = 0;
+    guessInput.value = "";
+
+    // Get a new answer from the word list
+    getWordList().then(wordList => {
+        answer = wordList[Math.floor(Math.random() * wordList.length)];
+        console.log("New Answer (debugging):", answer); // Logs the new answer to the console for testing
+    });
 }
 
 
