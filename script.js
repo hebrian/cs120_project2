@@ -1,9 +1,14 @@
 /*----- Set up the game ----- */
+const gameSettings = {
+    maxAttempts: 6,
+    theme: "classic",
+};
+
 // Set up variables to track the game state
 let answer;
 let currentRow = 0; 
-let maxAttempts = 6; 
-let theme = "classic";
+let maxAttempts = gameSettings.maxAttempts; 
+let theme = gameSettings.theme;
 
 // Get references to the game elements
 const gameBoard = document.getElementById("board");
