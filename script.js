@@ -3,6 +3,7 @@
 let answer;
 let currentRow = 0; 
 let maxAttempts = 6; 
+let theme = "classic";
 
 // Get references to the game elements
 const gameBoard = document.getElementById("board");
@@ -29,19 +30,32 @@ for (let row = 0; row < 6; row++) {
 }
 
 // Call getWordList to fetch the list of words from the API
-getWordList().then(wordList => {
+getWordList(theme).then(wordList => {
     // Select a random word from the word list
     answer = wordList[Math.floor(Math.random() * wordList.length)];
     console.log("Answer (debugging):", answer); // Log the answer to the console
 });
 
 /*----- Set up game logic -----*/
-async function getWordList() {
+async function getWordList(theme = "classic") {
+    // Set the base API URL
+    let apiUrl = "https://api.datamuse.com/words?sp=?????";
+
+    // Modify the API URL if a specific theme is selected (not "classic")
+    if (theme !== "classic") {
+        apiUrl += `&ml=${theme}`;
+    }
+
     try {
-        // Fetch a list of 30 five-letter words from the Datamuse API
-        const response = await fetch("https://api.datamuse.com/words?sp=?????&max=30");
+        // Fetch up to 30 words based on the specified theme or classic mode
+        const response = await fetch(apiUrl + "&max=30");
         const words = await response.json();
-        const wordList = words.map(wordObj => wordObj.word);
+
+        // Filter out multi-word phrases and ensure only single, five-letter words
+        const wordList = words.map(wordObj => wordObj.word)
+        .filter(word => word.length === 5 && !word.includes(" ")); // Ensures no spaces and exactly 5 letters
+
+        console.log('API URL:', apiUrl); // Log the API URL to the console for testing
         console.log(wordList);  // Log the list of words to the console for testing
         return wordList;
     } catch (error) {
@@ -151,13 +165,13 @@ function checkGuess(guess) {
         setTimeout(() => {
             // Use currentRow (not + 1 due to the timeout) to get the correct attempt number
             alert(`Congratulations! You got the correct word in ${currentRow} attempts.`); 
-            resetGame();
+            resetGame(theme);
         }, 500); // Delay to ensure board updates before alert
     }
 }
 
 
-function resetGame() {
+function resetGame(theme = "classic") {
     // Reset the board cells to be blank
     const cells = document.querySelectorAll(".cell");
     cells.forEach(cell => {
@@ -170,18 +184,38 @@ function resetGame() {
     guessInput.value = "";
 
     // Get a new answer from the word list
-    getWordList().then(wordList => {
+    getWordList(theme).then(wordList => {
         answer = wordList[Math.floor(Math.random() * wordList.length)];
         console.log("New Answer (debugging):", answer); // Logs the new answer to the console for testing
     });
 }
 
+// Apply the selected theme and reset the game
+function applyTheme(theme) {
+    // Show alert with the selected theme
+    alert(`Theme changed to ${theme}!`);
+
+    // Log the change to the console
+    console.log(`Theme changed to ${theme}`);
+
+    // Reset the game with the new theme
+    resetGame(theme);
+}
 
 /*-----Set up event listeners-----*/
+// Listen for the submit button to be clicked
 submitButton.addEventListener("click", interpretGuess);
 // Listen for the enter key to be pressed when typing in the input field
 guessInput.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         interpretGuess();
+    }
+});
+// Listen for theme changes
+document.getElementById("theme-selection").addEventListener("change", (event) => {
+    if (event.target.name === "theme") {
+        const selectedTheme = event.target.value;
+        theme = selectedTheme; // Update the theme variable
+        applyTheme(theme); // Apply theme change
     }
 });
