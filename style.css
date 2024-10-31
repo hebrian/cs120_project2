@@ -76,3 +76,9 @@ body {
     background-color: gray;
     color: white;
 }
+
+/* Add space above the theme selection */
+#current-theme {
+    margin-top: 20px; /* Adjust the value as needed */
+    margin-bottom: 10px;
+}
